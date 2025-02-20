@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"   // Usando SQLite para criar um banco de dados local
+  url      = "file:./dev.db" // Caminho para o banco de dados local, que será criado automaticamente
+}
+
+model User {
+  id        String   @id @default(uuid())
+  cpf       String   @unique
+  name      String? 
+  password  String
+  email     String @unique
+  role      String
+  ordersAsRecipient Order[]  @relation("RecipientOrders")   // Relacionamento com pedidos como destinatário
+  ordersAsDeliveryman Order[] @relation("DeliverymanOrders") // Relacionamento com pedidos como entregador
+
+  @@map("users")
+}
+
+model Order {
+  id             String   @id @default(uuid())
+  address        String
+  status         String   @default("aguardando")
+  deliveryPhoto  String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  recipientId    String
+  deliverymanId  String
+
+  recipient      User     @relation("RecipientOrders", fields: [recipientId], references: [id]) // Relacionamento com o destinatário
+  deliveryman    User     @relation("DeliverymanOrders", fields: [deliverymanId], references: [id]) // Relacionamento com o entregador
+
+  @@map("order")
+}
