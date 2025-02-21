@@ -1,16 +1,19 @@
-import express, { Request, Response } from 'express';
-import { UserController } from './controllers/UserController';
+import express from 'express';
+import cors from 'cors';
+import userRoutes from './routes/userRoutes';
+import OrderRoutes from './routes/OrderRoutes';
 
 const app = express();
-const port = 3000;
+const port = 3333;
 
-// Middleware para parse de JSON
+app.use(cors());
 app.use(express.json());
 
-// Rota para criar um usuário
-app.post('/user', UserController.createUser);
+app.use('/users', userRoutes);
+app.use('/orders', OrderRoutes);
 
-// Inicia o servidor
 app.listen(port, () => {
-  console.log(`Servidor rodando em http://localhost:${port}`);
+  console.log(`🚀 Servidor rodando em http://localhost:${port}`);
 });
+
+export default app;
